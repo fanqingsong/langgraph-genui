@@ -1,17 +1,36 @@
-# New LangGraph Project
+# LangGraph Weather Agent with Generative UI
 
 [![CI](https://github.com/langchain-ai/new-langgraph-project/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/langchain-ai/new-langgraph-project/actions/workflows/unit-tests.yml)
 [![Integration Tests](https://github.com/langchain-ai/new-langgraph-project/actions/workflows/integration-tests.yml/badge.svg)](https://github.com/langchain-ai/new-langgraph-project/actions/workflows/integration-tests.yml)
 
-This template demonstrates a simple application implemented using [LangGraph](https://github.com/langchain-ai/langgraph), designed for showing how to get started with [LangGraph Server](https://langchain-ai.github.io/langgraph/concepts/langgraph_server/#langgraph-server) and using [LangGraph Studio](https://langchain-ai.github.io/langgraph/concepts/langgraph_studio/), a visual debugging IDE.
+A sophisticated weather agent built with [LangGraph](https://github.com/langchain-ai/langgraph) that demonstrates **Generative UI** capabilities. The agent processes natural language weather queries and responds with both conversational text and rich, animated UI components.
 
 <div align="center">
   <img src="./static/studio_ui.png" alt="Graph view in LangGraph studio UI" width="75%" />
 </div>
 
-The core logic defined in `src/agent/graph.py`, showcases an single-step application that responds with a fixed string and the configuration provided.
+## Features
 
-You can extend this graph to orchestrate more complex agentic workflows that can be visualized and debugged in LangGraph Studio.
+🌤️ **Smart City Detection** - Automatically identifies cities from natural language queries  
+🎨 **Generative UI** - Backend dynamically commands frontend to render specific components  
+✨ **Animated Weather Cards** - Modern glass morphism design with city-specific styling  
+🔄 **Hot Reload Development** - Real-time updates during development with LangGraph Studio  
+🧪 **Comprehensive Testing** - Unit and integration tests with CI/CD workflows
+
+## How It Works
+
+1. **User Input**: "What's the weather in London?"
+2. **City Detection**: Agent identifies "London" from the query
+3. **Dual Response**: 
+   - Conversational AI message: "Here's the weather for London"
+   - UI Command: Renders animated weather card for London
+4. **Rich Display**: Interactive weather card with temperature, conditions, and animations
+
+### Supported Cities
+- **London** 🌧️ - Gray stormy gradient (59°F)
+- **New York** ☀️ - Sunny orange gradient (68°F) 
+- **Tokyo** 🌤️ - Pink sunset gradient (75°F)
+- **San Francisco** ⛅ - Blue ocean gradient (72°F, default)
 
 ## Getting Started
 
@@ -51,11 +70,61 @@ langgraph dev
 
 For more information on getting started with LangGraph Server, [see here](https://langchain-ai.github.io/langgraph/tutorials/langgraph-platform/local-server/).
 
-## How to customize
+## Architecture
 
-1. **Define configurable parameters**: Modify the `Configuration` class in the `graph.py` file to expose the arguments you want to configure. For example, in a chatbot application you may want to define a dynamic system prompt or LLM to use. For more information on configurations in LangGraph, [see here](https://langchain-ai.github.io/langgraph/concepts/low_level/?h=configuration#configuration).
+### Core Components
 
-2. **Extend the graph**: The core logic of the application is defined in [graph.py](./src/agent/graph.py). You can modify this file to add new nodes, edges, or change the flow of information.
+- **`langgraph.json`** - Configuration hub connecting backend graph to frontend UI
+- **`src/agent/graph.py`** - Weather agent with city detection and UI emission logic
+- **`src/agent/ui.tsx`** - Animated React weather card component
+- **`tests/`** - Comprehensive unit and integration test suites
+
+### Generative UI Flow
+
+```
+User Query → City Detection → Dual Response
+    ↓              ↓              ↓
+"weather in    "London"     AI Message +
+ london"                    UI Command
+                                ↓
+                         WeatherComponent
+                         (London styling)
+```
+
+### Key Functions
+
+- `weather()` in `graph.py` - Processes queries and emits UI components
+- `push_ui_message("weather", {city}, message)` - Commands frontend rendering
+- `WeatherComponent` - Renders animated cards with city-specific data
+
+## How to Customize
+
+### Adding New Cities
+
+1. **Update city detection** in `src/agent/graph.py`:
+```python
+if "paris" in message_content.lower():
+    city = "Paris"
+```
+
+2. **Add weather data** in `src/agent/ui.tsx`:
+```typescript
+const mockWeatherData = {
+  Paris: {
+    temperature: "18°C",
+    condition: "🌧️ Rainy",
+    // ...
+  }
+}
+```
+
+3. **Add city-specific styling** with gradients and colors
+
+### Extending the Graph
+
+- **Add new nodes**: Extend the graph in `src/agent/graph.py` for more complex workflows
+- **Multiple UI components**: Create additional React components and register them in `langgraph.json`
+- **Real weather API**: Replace mock data with actual weather service integration
 
 ## Development
 

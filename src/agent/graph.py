@@ -1,54 +1,67 @@
-"""LangGraph single-node graph template.
+"""LangGraph Generative UI Agent.
 
-Returns a predefined response. Replace logic and configuration as needed.
+A simple weather agent that demonstrates generative UI components.
 """
 
-from __future__ import annotations
+import uuid
+from typing import Annotated, Sequence, TypedDict
 
-from dataclasses import dataclass
-from typing import Any, Dict, TypedDict
-
-from langchain_core.runnables import RunnableConfig
+from langchain_core.messages import AIMessage, BaseMessage
 from langgraph.graph import StateGraph
+from langgraph.graph.message import add_messages
+from langgraph.graph.ui import AnyUIMessage, push_ui_message, ui_message_reducer
 
 
-class Configuration(TypedDict):
-    """Configurable parameters for the agent.
+class WeatherOutput(TypedDict):
+    """Weather output with city information."""
 
-    Set these when creating assistants OR when invoking the graph.
-    See: https://langchain-ai.github.io/langgraph/cloud/how-tos/configuration_cloud/
-    """
-
-    my_configurable_param: str
+    city: str
 
 
-@dataclass
-class State:
-    """Input state for the agent.
+class AgentState(TypedDict):
+    """Agent state with messages and UI components."""
 
-    Defines the initial structure of incoming data.
-    See: https://langchain-ai.github.io/langgraph/concepts/low_level/#state
-    """
-
-    changeme: str = "example"
+    messages: Annotated[Sequence[BaseMessage], add_messages]
+    ui: Annotated[Sequence[AnyUIMessage], ui_message_reducer]
 
 
-async def call_model(state: State, config: RunnableConfig) -> Dict[str, Any]:
-    """Process input and returns output.
+async def weather(state: AgentState) -> dict[str, list[AIMessage]]:
+    """Weather node that generates UI components."""
+    # For this demo, we'll extract city from the last user message
+    # In a real implementation, you'd use structured output with ChatOpenAI
+    last_message = state["messages"][-1] if state["messages"] else None
+    user_input = last_message.content if last_message else ""
 
-    Can use runtime configuration to alter behavior.
-    """
-    configuration = config["configurable"]
-    return {
-        "changeme": "output from call_model. "
-        f'Configured with {configuration.get("my_configurable_param")}'
-    }
+    # Ensure user_input is a string for processing
+    if isinstance(user_input, list):
+        user_input = " ".join(str(item) for item in user_input)
+    user_input = str(user_input)
+
+    # Simple city extraction (in real implementation, use structured output)
+    city = "San Francisco"  # Default city
+    if "london" in user_input.lower():
+        city = "London"
+    elif "new york" in user_input.lower():
+        city = "New York"
+    elif "tokyo" in user_input.lower():
+        city = "Tokyo"
+
+    weather_data: WeatherOutput = {"city": city}
+
+    message = AIMessage(
+        id=str(uuid.uuid4()), content=f"Here's the weather for {weather_data['city']}"
+    )
+
+    # Emit UI elements associated with the message
+    push_ui_message("weather", dict(weather_data), message=message)
+
+    return {"messages": [message]}
 
 
 # Define the graph
 graph = (
-    StateGraph(State, config_schema=Configuration)
-    .add_node(call_model)
-    .add_edge("__start__", "call_model")
-    .compile(name="New Graph")
+    StateGraph(AgentState)
+    .add_node("weather", weather)
+    .add_edge("__start__", "weather")
+    .compile()
 )

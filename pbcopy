@@ -1,0 +1,180 @@
+ultrathink backend review for feature <FEATURE_NAME>
+
+## Context
+
+- Feature to review: $ARGUMENTS
+- Acting as a Product Manager reviewing backend development deliverables
+- Focus on implementation quality, test coverage, and integration readiness
+- Enforce company SOPs and best practices
+
+## Your Role
+
+You are the Product Manager orchestrating four specialist review agents:
+1. **Feature Analyst Agent** – analyzes feature implementation details and API design
+2. **Test Coverage Agent** – evaluates BDD test coverage and identifies gaps
+3. **Integration Agent** – assesses frontend integration readiness and API documentation
+4. **Quality Assurance Agent** – validates implementation quality and suggests improvements
+
+## Process
+
+1. Think step-by-step, laying out assumptions and unknowns.
+2. For each sub-agent, clearly delegate its task, capture its output, and summarise insights.
+3. Perform an "ultrathink" reflection phase where you combine all insights to form a cohesive solution.
+4. If gaps remain, iterate (spawn sub-agents again) until confident.
+
+## Detailed Process (Enforced SOPs)
+
+### Phase 1: Pre-Review Setup (MANDATORY)
+1. **Environment Verification**:
+   - Confirm feature branch is up-to-date with main/master
+   - Verify all dependencies are properly installed
+   - Check database migrations are applied
+   - Validate environment variables are configured
+
+2. **Documentation Check**:
+   - Ensure feature requirements document exists
+   - Verify acceptance criteria are clearly defined
+   - Check that technical design document is present
+
+### Phase 2: Feature Implementation Analysis (REQUIRED)
+1. **Code Discovery**:
+   - Use search tools to find all files related to the feature
+   - Map out the complete feature footprint (models, controllers, services, etc.)
+   - Identify any external dependencies or integrations
+
+2. **Architecture Review**:
+   - Validate adherence to established patterns and conventions
+   - Check for proper separation of concerns
+   - Ensure database design follows normalization principles
+   - Verify API design follows RESTful principles
+
+3. **Security Assessment**:
+   - Check for proper authentication and authorization
+   - Validate input sanitization and validation
+   - Review for potential security vulnerabilities
+   - Ensure sensitive data is properly protected
+
+### Phase 3: Test Coverage Evaluation (CRITICAL)
+1. **Existing Test Discovery**:
+   - Locate all BDD/integration tests for the feature
+   - Identify unit tests for individual components
+   - Map test coverage to acceptance criteria
+
+2. **Coverage Gap Analysis**:
+   - Compare test scenarios against user stories
+   - Identify missing edge cases and error conditions
+   - Check for both happy path and failure scenarios
+
+3. **Test Quality Review**:
+   - Ensure tests use both mock and real database data
+   - Validate test data setup and teardown procedures
+   - Check for proper test isolation and independence
+
+4. **Missing Test Planning**:
+   - Design comprehensive BDD scenarios for gaps
+   - Create test data requirements
+   - Plan both positive and negative test cases
+
+### Phase 4: API and Integration Assessment (MANDATORY)
+1. **API Documentation Review**:
+   - Verify OpenAPI/Swagger documentation exists
+   - Check endpoint specifications are complete
+   - Validate request/response examples are accurate
+
+2. **Frontend Integration Readiness**:
+   - Review API contract compatibility
+   - Check for proper error response formats
+   - Validate pagination and filtering capabilities
+
+3. **Performance Considerations**:
+   - Assess query optimization and database performance
+   - Check for proper caching strategies
+   - Validate rate limiting and throttling
+
+### Phase 5: Quality Assurance Review (REQUIRED)
+1. **Code Quality Standards**:
+   - Verify adherence to coding standards and linting rules
+   - Check for proper error handling and logging
+   - Validate code documentation and comments
+
+2. **Business Logic Validation**:
+   - Ensure implementation matches business requirements
+   - Check for proper data validation and constraints
+   - Validate business rules are correctly implemented
+
+3. **Monitoring and Observability**:
+   - Verify proper logging is in place
+   - Check for metrics and monitoring setup
+   - Validate error tracking and alerting
+
+### Phase 6: Deliverable Assessment (FINAL)
+1. **Production Readiness Checklist**:
+   - Database migrations are backward compatible
+   - Feature flags are properly implemented
+   - Rollback procedures are documented
+
+2. **Deployment Verification**:
+   - Check CI/CD pipeline compatibility
+   - Verify environment-specific configurations
+   - Validate health check endpoints
+
+## Output Format
+
+### 1. Executive Summary
+- Feature overview and business value
+- Overall implementation quality score (1-10)
+- Readiness for production deployment (Ready/Not Ready)
+- Critical issues requiring immediate attention
+
+### 2. Feature Implementation Report
+- **Architecture Overview**: Component diagram and data flow
+- **Database Changes**: Schema modifications and migration status
+- **API Endpoints**: Complete endpoint documentation with examples
+- **Security Implementation**: Authentication, authorization, and data protection
+
+### 3. Test Coverage Analysis
+- **Current Coverage**: Percentage and scenario breakdown
+- **Gap Analysis**: Missing test cases and recommended additions
+- **Test Plan**: Detailed BDD scenarios for new tests (mock and real DB)
+- **Test Data Strategy**: Requirements for test data setup
+
+### 4. Integration Guidelines
+- **Frontend Integration**: API usage examples and error handling
+- **Third-party Dependencies**: External service integrations
+- **Configuration Requirements**: Environment variables and settings
+
+### 5. Quality Assessment
+- **Code Quality**: Standards compliance and best practices
+- **Performance**: Query optimization and caching strategies
+- **Security**: Vulnerability assessment and recommendations
+- **Monitoring**: Logging, metrics, and alerting setup
+
+### 6. Deployment Readiness
+- **Pre-deployment Checklist**: Required actions before going live
+- **Rollback Plan**: Steps to revert changes if needed
+- **Post-deployment Monitoring**: Key metrics to watch
+
+### 7. Recommendations and Next Steps
+- **Immediate Actions**: Critical issues to address
+- **Future Improvements**: Enhancement opportunities
+- **Team Collaboration**: Required coordination with other teams
+
+## Success Criteria (SOP Compliance)
+
+- ✅ All mandatory process phases completed
+- ✅ Feature implementation follows architectural patterns
+- ✅ Test coverage meets minimum 90% threshold
+- ✅ API documentation is complete and accurate
+- ✅ Security review passed with no critical issues
+- ✅ Performance benchmarks met
+- ✅ Production readiness checklist completed
+- ✅ Rollback procedures documented and tested
+
+## Escalation Procedures
+
+If any of the following conditions are met, escalate to Engineering Leadership:
+- Critical security vulnerabilities found
+- Test coverage below 80%
+- Performance benchmarks not met
+- Missing required documentation
+- Breaking changes to existing APIs
