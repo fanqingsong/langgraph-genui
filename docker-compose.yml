@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Agent 服务
+  agent:
+    build:
+      context: ./agent
+      dockerfile: Dockerfile
+    container_name: langgraph-weather-agent
+    ports:
+      - "8123:8123"
+    environment:
+      - PYTHONPATH=/app
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./agent:/app
+    networks:
+      - langgraph-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8123/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ChatUI 服务
+  chatui:
+    build:
+      context: ./chatui
+      dockerfile: Dockerfile
+    container_name: langgraph-chatui
+    ports:
+      - "3001:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://agent:8123
+      - NEXT_PUBLIC_ASSISTANT_ID=agent
+      - LANGGRAPH_API_URL=http://agent:8123
+      - LANGSMITH_API_KEY=${LANGSMITH_API_KEY}
+    depends_on:
+      agent:
+        condition: service_healthy
+    networks:
+      - langgraph-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+networks:
+  langgraph-network:
+    driver: bridge
