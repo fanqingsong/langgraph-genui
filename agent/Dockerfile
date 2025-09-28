@@ -35,7 +35,7 @@ COPY langgraph.json ./
 COPY src/ ./src/
 
 # 安装 Python 依赖（使用国内镜像源）
-RUN pip install --no-cache-dir --timeout 300 --retries 5 -e . "langgraph-cli[inmem]"
+RUN pip install --no-cache-dir --timeout 300 --retries 5 -e . "langgraph-cli[inmem]==0.4.0"
 
 # 暴露端口
 EXPOSE 8123

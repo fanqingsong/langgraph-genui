@@ -1,6 +1,6 @@
-"""LangGraph Weather Agent.
+"""LangGraph Generative UI Agent.
 
-A simple weather agent that provides weather information.
+A simple weather agent that demonstrates generative UI components.
 """
 
 import uuid
@@ -9,16 +9,24 @@ from typing import Annotated, Sequence, TypedDict
 from langchain_core.messages import AIMessage, BaseMessage
 from langgraph.graph import StateGraph
 from langgraph.graph.message import add_messages
+from langgraph.graph.ui import AnyUIMessage, push_ui_message, ui_message_reducer
+
+
+class WeatherOutput(TypedDict):
+    """Weather output with city information."""
+
+    city: str
 
 
 class AgentState(TypedDict):
-    """Agent state with messages."""
+    """Agent state with messages and UI components."""
 
     messages: Annotated[Sequence[BaseMessage], add_messages]
+    ui: Annotated[Sequence[AnyUIMessage], ui_message_reducer]
 
 
 async def weather(state: AgentState) -> dict[str, list[AIMessage]]:
-    """Weather node that provides weather information."""
+    """Weather node that generates UI components."""
     # For this demo, we'll extract city from the last user message
     # In a real implementation, you'd use structured output with ChatOpenAI
     last_message = state["messages"][-1] if state["messages"] else None
@@ -38,61 +46,14 @@ async def weather(state: AgentState) -> dict[str, list[AIMessage]]:
     elif "tokyo" in user_input.lower():
         city = "Tokyo"
 
-    # Mock weather data for different cities
-    weather_data = {
-        'San Francisco': {
-            'temperature': '72°F',
-            'condition': 'Partly Cloudy',
-            'humidity': '65%',
-            'windSpeed': '8 mph',
-            'icon': '⛅',
-            'description': 'A beautiful day with some clouds'
-        },
-        'London': {
-            'temperature': '59°F', 
-            'condition': 'Rainy',
-            'humidity': '82%',
-            'windSpeed': '12 mph',
-            'icon': '🌧️',
-            'description': 'Light rain throughout the day'
-        },
-        'New York': {
-            'temperature': '68°F',
-            'condition': 'Sunny',
-            'humidity': '58%', 
-            'windSpeed': '6 mph',
-            'icon': '☀️',
-            'description': 'Clear skies and sunshine'
-        },
-        'Tokyo': {
-            'temperature': '75°F',
-            'condition': 'Partly Sunny',
-            'humidity': '70%',
-            'windSpeed': '5 mph', 
-            'icon': '🌤️',
-            'description': 'Warm with occasional clouds'
-        }
-    }
-
-    # Get weather data for the city
-    city_weather = weather_data.get(city, weather_data['San Francisco'])
-    
-    # Create formatted weather message
-    weather_content = f"""# 🌤️ Weather for {city}
-
-**{city_weather['icon']} {city_weather['condition']}**
-
-- **Temperature**: {city_weather['temperature']}
-- **Humidity**: {city_weather['humidity']}
-- **Wind Speed**: {city_weather['windSpeed']}
-- **Description**: {city_weather['description']}
-
-*Weather information provided by the weather agent*"""
+    weather_data: WeatherOutput = {"city": city}
 
     message = AIMessage(
-        id=str(uuid.uuid4()), 
-        content=weather_content
+        id=str(uuid.uuid4()), content=f"Here's the weather for {weather_data['city']}"
     )
+
+    # Emit UI elements associated with the message
+    push_ui_message("weather", dict(weather_data), message=message)
 
     return {"messages": [message]}
 
